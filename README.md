@@ -91,6 +91,7 @@ Edit ios/Runner/Info.plist and add this inside the <dict> tag:
 // Server should return: "forceUpdate": true
 // The dialog will hide "Later" button and prevent dismissal
 import 'package:flutter_custom_updater/flutter_custom_updater.dart';
+```
 
 final updater = AppUpdater(
   context: context,
