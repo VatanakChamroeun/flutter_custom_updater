@@ -30,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
       context: context,
       config: UpdaterConfig(
         // Replace with your actual server URL
-        updateCheckUrl: 'https://your-server.com/api/check-update',
+        updateCheckUrl: 'http://10.0.2.2:3000/api/check-update', // Special Android emulator IP that maps to host's localhost
 
         // UI Customization
         dialogTitle: 'Update Available! 🚀',
