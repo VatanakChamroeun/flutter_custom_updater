@@ -2,12 +2,15 @@ name: example
 description: "Demonstrates how to use the flutter_custom_updater package."
 publish_to: 'none'
 
+version: 1.0.0+1
+
 environment:
   sdk: ^3.9.0
 
 dependencies:
   flutter:
     sdk: flutter
+  package_info_plus: ^9.0.0
   flutter_custom_updater:
     path: ../
 

@@ -41,7 +41,7 @@ app.get('/api/check-update', (req, res) => {
   if (!hasUpdate) {
     console.log('✅ No update needed');
     return res.json({
-      hasUpdate: false
+      has_update: false
     });
   }
   
@@ -64,28 +64,28 @@ app.get('/api/check-update', (req, res) => {
     }
     
     res.json({
-      hasUpdate: true,
+      has_update: true,
       version: latestVersion,
-      downloadUrl: `${baseUrl}/downloads/${apkFileName}`,
-      fileName: apkFileName,
-      releaseNotes: '🚀 New Features:\n- Bug fixes\n- Performance improvements\n- New UI enhancements',
-      forceUpdate: false,
-      fileSize: fileSize
+      download_url: `${baseUrl}/downloads/${apkFileName}`,
+      file_name: apkFileName,
+      release_notes: '🚀 New Features:\n- Bug fixes\n- Performance improvements\n- New UI enhancements',
+      force_update: false,
+      file_size: fileSize
     });
   } else if (platform === 'ios') {
     // iOS response
     res.json({
-      hasUpdate: true,
+      has_update: true,
       version: latestVersion,
-      downloadUrl: `${baseUrl}/ios/manifest.plist`,
-      iosManifestUrl: `${baseUrl}/ios/manifest.plist`,
-      releaseNotes: '🍎 iOS Update:\n- Bug fixes\n- Performance improvements\n- New features',
-      forceUpdate: false
+      download_url: `${baseUrl}/ios/manifest.plist`,
+      ios_manifest_url: `${baseUrl}/ios/manifest.plist`,
+      release_notes: '🍎 iOS Update:\n- Bug fixes\n- Performance improvements\n- New features',
+      force_update: false
     });
   } else {
     // Unknown platform
     res.json({
-      hasUpdate: false,
+      has_update: false,
       error: 'Unknown platform'
     });
   }
@@ -97,9 +97,9 @@ app.get('/health', (req, res) => {
     status: 'ok',
     message: 'Mock Update Server is running',
     endpoints: {
-      checkUpdate: '/api/check-update',
-      androidDownload: '/downloads/app-v1.2.3.apk',
-      iosManifest: '/ios/manifest.plist'
+      check_update: '/api/check-update',
+      android_download: '/downloads/app-v1.2.3.apk',
+      ios_manifest: '/ios/manifest.plist'
     }
   });
 });

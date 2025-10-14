@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_custom_updater/flutter_custom_updater.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -11,14 +12,31 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   String _updateStatus = 'No update check performed';
+  String _appVersion = 'Loading...';
+  String _buildNumber = '';
 
   @override
   void initState() {
     super.initState();
+    _loadAppVersion();
     // Check for updates on app start
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkForUpdates();
     });
+  }
+
+  Future<void> _loadAppVersion() async {
+    try {
+      final packageInfo = await PackageInfo.fromPlatform();
+      setState(() {
+        _appVersion = packageInfo.version;
+        _buildNumber = packageInfo.buildNumber;
+      });
+    } catch (e) {
+      setState(() {
+        _appVersion = 'Unknown';
+      });
+    }
   }
 
   Future<void> _checkForUpdates() async {
@@ -31,7 +49,6 @@ class _HomeScreenState extends State<HomeScreen> {
       config: UpdaterConfig(
         // Replace with your actual server URL
         updateCheckUrl: 'http://10.0.2.2:3000/api/check-update', // Special Android emulator IP that maps to host's localhost
-
         // UI Customization
         dialogTitle: 'Update Available! 🚀',
         updateButtonText: 'Update Now',
@@ -134,7 +151,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               SizedBox(height: 30),
-              Text('Version 1.0.0', style: TextStyle(fontSize: 12, color: Colors.grey[500])),
+              Text(
+                'Version $_appVersion${_buildNumber.isNotEmpty ? ' ($_buildNumber)' : ''}',
+                style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+              ),
             ],
           ),
         ),

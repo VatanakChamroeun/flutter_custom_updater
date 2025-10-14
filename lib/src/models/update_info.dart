@@ -23,27 +23,27 @@ class UpdateInfo {
 
   factory UpdateInfo.fromJson(Map<String, dynamic> json) {
     return UpdateInfo(
-      hasUpdate: json['hasUpdate'] ?? false,
+      hasUpdate: json['has_update'] ?? false,
       version: json['version'],
-      downloadUrl: json['downloadUrl'] ?? '',
-      fileName: json['fileName'],
-      releaseNotes: json['releaseNotes'],
-      forceUpdate: json['forceUpdate'] ?? false,
-      fileSize: json['fileSize'],
-      iosManifestUrl: json['iosManifestUrl'],
+      downloadUrl: json['download_url'] ?? '',
+      fileName: json['file_name'],
+      releaseNotes: json['release_notes'],
+      forceUpdate: json['force_update'] ?? false,
+      fileSize: json['file_size'],
+      iosManifestUrl: json['ios_manifest_url'],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'hasUpdate': hasUpdate,
+      'has_update': hasUpdate,
       'version': version,
-      'downloadUrl': downloadUrl,
-      'fileName': fileName,
-      'releaseNotes': releaseNotes,
-      'forceUpdate': forceUpdate,
-      'fileSize': fileSize,
-      'iosManifestUrl': iosManifestUrl,
+      'download_url': downloadUrl,
+      'file_name': fileName,
+      'release_notes': releaseNotes,
+      'force_update': forceUpdate,
+      'file_size': fileSize,
+      'ios_manifest_url': iosManifestUrl,
     };
   }
 }
