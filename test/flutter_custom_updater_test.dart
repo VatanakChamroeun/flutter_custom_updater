@@ -10,14 +10,14 @@ void main() {
   group('UpdateInfo Model Tests', () {
     test('should create UpdateInfo from JSON with all fields', () {
       final json = {
-        'hasUpdate': true,
+        'has_update': true,
         'version': '1.2.3',
-        'downloadUrl': 'http://localhost:3000/downloads/app-v1.2.3.apk',
-        'fileName': 'app.apk',
-        'releaseNotes': 'Bug fixes',
-        'forceUpdate': false,
-        'fileSize': 1024000,
-        'iosManifestUrl': 'http://localhost:3000/ios/manifest.plist',
+        'download_url': 'http://localhost:3000/downloads/app-v1.2.3.apk',
+        'file_name': 'app.apk',
+        'release_notes': 'Bug fixes',
+        'force_update': false,
+        'file_size': 1024000,
+        'ios_manifest_url': 'http://localhost:3000/ios/manifest.plist',
       };
 
       final updateInfo = UpdateInfo.fromJson(json);
@@ -33,7 +33,7 @@ void main() {
     });
 
     test('should handle missing optional fields', () {
-      final json = {'hasUpdate': false, 'downloadUrl': ''};
+      final json = {'has_update': false, 'download_url': ''};
 
       final updateInfo = UpdateInfo.fromJson(json);
 
@@ -58,13 +58,13 @@ void main() {
 
       final json = updateInfo.toJson();
 
-      expect(json['hasUpdate'], true);
+      expect(json['has_update'], true);
       expect(json['version'], '1.2.3');
-      expect(json['downloadUrl'], 'http://localhost:3000/downloads/app-v1.2.3.apk');
-      expect(json['fileName'], 'app.apk');
-      expect(json['releaseNotes'], 'Bug fixes');
-      expect(json['forceUpdate'], true);
-      expect(json['fileSize'], 1024000);
+      expect(json['download_url'], 'http://localhost:3000/downloads/app-v1.2.3.apk');
+      expect(json['file_name'], 'app.apk');
+      expect(json['release_notes'], 'Bug fixes');
+      expect(json['force_update'], true);
+      expect(json['file_size'], 1024000);
     });
   });
 
