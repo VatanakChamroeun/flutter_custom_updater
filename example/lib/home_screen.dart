@@ -1,9 +1,10 @@
-import 'dart:io';
 import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_custom_updater/flutter_custom_updater.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:http/http.dart' as http;
+import 'package:package_info_plus/package_info_plus.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -119,6 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   UpdaterConfig _buildUpdaterConfig() {
     return UpdaterConfig(
+      dialogStyle: DialogStyle.snackbar,
       updateCheckUrl: _getServerUrl(),
       dialogTitle: 'Update Available! 🚀',
       updateButtonText: 'Update Now',

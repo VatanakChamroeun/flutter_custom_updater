@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_custom_updater/src/models/dialog_style.dart';
 
 class UpdaterConfig {
+  // Dialog Style
+  final DialogStyle dialogStyle;
+
   /// Required: URL to check for updates
   final String updateCheckUrl;
 
@@ -28,6 +32,11 @@ class UpdaterConfig {
   final String? errorTitle;
   final String? okButtonText;
 
+  // Snackbar style properties
+  final Color? snackbarBackgroundColor;
+  final Color? snackbarIconColor;
+  final String? snackbarDescription;
+
   /// Text styles
   final TextStyle? dialogTitleStyle;
   final TextStyle? dialogContentStyle;
@@ -44,6 +53,7 @@ class UpdaterConfig {
   final Function()? onInstallStart;
 
   UpdaterConfig({
+    this.dialogStyle = DialogStyle.material, // default to material
     required this.updateCheckUrl,
     this.customHeaders,
     this.timeout = const Duration(seconds: 30),
@@ -66,5 +76,8 @@ class UpdaterConfig {
     this.onError,
     this.onDownloadComplete,
     this.onInstallStart,
+    this.snackbarBackgroundColor,
+    this.snackbarIconColor,
+    this.snackbarDescription,
   });
 }

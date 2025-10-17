@@ -1,16 +1,18 @@
+import 'dart:convert';
 import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_custom_updater/flutter_custom_updater.dart';
+import 'package:flutter_custom_updater/src/widgets/cupertino_download_dialog.dart';
+import 'package:flutter_custom_updater/src/widgets/cupertino_update_dialog.dart';
+import 'package:flutter_custom_updater/src/widgets/snackbar_download_widget.dart';
+import 'package:flutter_custom_updater/src/widgets/snackbar_update_widget.dart';
 import 'package:http/http.dart' as http;
-import 'package:path_provider/path_provider.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'dart:convert';
-
-import 'models/update_info.dart';
-import 'models/updater_config.dart';
-import 'widgets/download_dialog.dart';
-import 'widgets/update_dialog.dart';
 
 class AppUpdater {
   final BuildContext context;
@@ -64,7 +66,10 @@ class AppUpdater {
 
       final response = await http
           .get(Uri.parse(config.updateCheckUrl), headers: headers)
-          .timeout(config.timeout, onTimeout: () => throw Exception('Connection timeout'));
+          .timeout(
+            config.timeout,
+            onTimeout: () => throw Exception('Connection timeout'),
+          );
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -82,29 +87,77 @@ class AppUpdater {
 
   /// Show update dialog
   Future<bool?> _showUpdateDialog(UpdateInfo updateInfo) async {
-    return await showDialog<bool>(
-      context: context,
-      barrierDismissible: config.allowDismiss && !(updateInfo.forceUpdate ?? false),
-      builder: (BuildContext context) {
-        return UpdateDialog(updateInfo: updateInfo, config: config);
-      },
-    );
+    if (config.dialogStyle == DialogStyle.snackbar) {
+      // Use bottom sheet for snackbar style
+      return await showModalBottomSheet<bool>(
+        context: context,
+        backgroundColor: Colors.transparent,
+        isDismissible:
+            config.allowDismiss && !(updateInfo.forceUpdate ?? false),
+        enableDrag: config.allowDismiss && !(updateInfo.forceUpdate ?? false),
+        builder: (BuildContext context) {
+          return SnackbarUpdateWidget(
+            updateInfo: updateInfo,
+            config: config,
+            onUpdate: () => Navigator.of(context).pop(true),
+            onDismiss: (updateInfo.forceUpdate ?? false)
+                ? null
+                : () => Navigator.of(context).pop(false),
+          );
+        },
+      );
+    } else {
+      return await showDialog<bool>(
+        context: context,
+        barrierDismissible:
+            config.allowDismiss && !(updateInfo.forceUpdate ?? false),
+        builder: (BuildContext context) {
+          if (config.dialogStyle == DialogStyle.cupertino) {
+            return CupertinoUpdateDialog(
+              updateInfo: updateInfo,
+              config: config,
+            );
+          } else {
+            return UpdateDialog(updateInfo: updateInfo, config: config);
+          }
+        },
+      );
+    }
   }
 
   /// Download and install APK (Android)
   Future<void> _downloadAndInstallApk(UpdateInfo updateInfo) async {
     try {
-      // Show download dialog
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => DownloadDialog(config: config),
-      );
+      // Show download dialog/snackbar based on style
+      if (config.dialogStyle == DialogStyle.snackbar) {
+        showModalBottomSheet(
+          context: context,
+          backgroundColor: Colors.transparent,
+          isDismissible: false,
+          enableDrag: false,
+          builder: (context) => SnackbarDownloadWidget(config: config),
+        );
+      } else {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) {
+            if (config.dialogStyle == DialogStyle.cupertino) {
+              return CupertinoDownloadDialog(config: config);
+            } else {
+              return DownloadDialog(config: config);
+            }
+          },
+        );
+      }
 
       // Download APK
       final response = await http
           .get(Uri.parse(updateInfo.downloadUrl))
-          .timeout(config.downloadTimeout, onTimeout: () => throw Exception('Download timeout'));
+          .timeout(
+            config.downloadTimeout,
+            onTimeout: () => throw Exception('Download timeout'),
+          );
 
       if (response.statusCode == 200) {
         // Save to storage
@@ -175,30 +228,112 @@ class AppUpdater {
 
   /// Install Enterprise IPA using itms-services
   Future<void> _installEnterpriseIpa(UpdateInfo updateInfo) async {
-    // Show progress dialog
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            CircularProgressIndicator(),
-            SizedBox(height: 20),
-            Text(
-              config.iosInstallText ?? 'Preparing installation...\nPlease follow the system prompts.',
-              textAlign: TextAlign.center,
-              style: config.dialogContentStyle,
-            ),
-          ],
+    // Show progress dialog based on style
+    if (config.dialogStyle == DialogStyle.cupertino) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => CupertinoAlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const CupertinoActivityIndicator(radius: 14),
+              const SizedBox(height: 20),
+              Text(
+                config.iosInstallText ??
+                    'Preparing installation...\nPlease follow the system prompts.',
+                textAlign: TextAlign.center,
+                style:
+                    config.dialogContentStyle ?? const TextStyle(fontSize: 13),
+              ),
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    } else if (config.dialogStyle == DialogStyle.snackbar) {
+      showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.transparent,
+        isDismissible: false,
+        enableDrag: false,
+        builder: (context) => Container(
+          margin: const EdgeInsets.only(left: 16, right: 16, bottom: 32),
+          decoration: BoxDecoration(
+            color:
+                config.snackbarBackgroundColor ?? Theme.of(context).cardColor,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.15),
+                blurRadius: 20,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Material(
+            color: Colors.transparent,
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 3,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        config.snackbarIconColor ??
+                            Theme.of(context).primaryColor,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    config.iosInstallText ??
+                        'Preparing installation...\nPlease follow the system prompts.',
+                    textAlign: TextAlign.center,
+                    style:
+                        config.dialogContentStyle ??
+                        const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    } else {
+      // Material style
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const CircularProgressIndicator(),
+              const SizedBox(height: 20),
+              Text(
+                config.iosInstallText ??
+                    'Preparing installation...\nPlease follow the system prompts.',
+                textAlign: TextAlign.center,
+                style: config.dialogContentStyle,
+              ),
+            ],
+          ),
+        ),
+      );
+    }
 
     // Construct itms-services URL
     // The manifest URL should point to a .plist file on HTTPS server
     final manifestUrl = updateInfo.iosManifestUrl ?? updateInfo.downloadUrl;
-    final itmsUrl = 'itms-services://?action=download-manifest&url=$manifestUrl';
+    final itmsUrl =
+        'itms-services://?action=download-manifest&url=$manifestUrl';
 
     final uri = Uri.parse(itmsUrl);
 
@@ -224,16 +359,43 @@ class AppUpdater {
   void _showErrorDialog(String message) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(config.errorTitle ?? 'Error', style: config.dialogTitleStyle),
-        content: Text(message, style: config.dialogContentStyle),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(config.okButtonText ?? 'OK', style: config.buttonTextStyle),
-          ),
-        ],
-      ),
+      builder: (context) {
+        if (config.dialogStyle == DialogStyle.cupertino) {
+          return CupertinoAlertDialog(
+            title: Text(
+              config.errorTitle ?? 'Error',
+              style: config.dialogTitleStyle,
+            ),
+            content: Text(message, style: config.dialogContentStyle),
+            actions: [
+              CupertinoDialogAction(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text(
+                  config.okButtonText ?? 'OK',
+                  style: config.buttonTextStyle,
+                ),
+              ),
+            ],
+          );
+        } else {
+          return AlertDialog(
+            title: Text(
+              config.errorTitle ?? 'Error',
+              style: config.dialogTitleStyle,
+            ),
+            content: Text(message, style: config.dialogContentStyle),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text(
+                  config.okButtonText ?? 'OK',
+                  style: config.buttonTextStyle,
+                ),
+              ),
+            ],
+          );
+        }
+      },
     );
   }
 }
