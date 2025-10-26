@@ -1,5 +1,7 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
+
 import '../models/update_info.dart';
 import '../models/updater_config.dart';
 
@@ -7,7 +9,11 @@ class UpdateDialog extends StatelessWidget {
   final UpdateInfo updateInfo;
   final UpdaterConfig config;
 
-  const UpdateDialog({super.key, required this.updateInfo, required this.config});
+  const UpdateDialog({
+    super.key,
+    required this.updateInfo,
+    required this.config,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +24,9 @@ class UpdateDialog extends StatelessWidget {
       child: AlertDialog(
         title: Text(
           config.dialogTitle ?? 'Update Available',
-          style: config.dialogTitleStyle ?? const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          style:
+              config.dialogTitleStyle ??
+              const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
         content: SingleChildScrollView(
           child: Column(
@@ -27,11 +35,21 @@ class UpdateDialog extends StatelessWidget {
             children: [
               if (updateInfo.version != null) ...[
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(color: Colors.blue.shade50, borderRadius: BorderRadius.circular(15)),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.shade50,
+                    borderRadius: BorderRadius.circular(15),
+                  ),
                   child: Text(
                     'Version ${updateInfo.version}',
-                    style: TextStyle(color: Colors.blue.shade700, fontWeight: FontWeight.bold, fontSize: 14),
+                    style: TextStyle(
+                      color: Colors.blue.shade700,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 15),
@@ -39,12 +57,17 @@ class UpdateDialog extends StatelessWidget {
               if (updateInfo.releaseNotes != null) ...[
                 Text(
                   updateInfo.releaseNotes!,
-                  style: config.dialogContentStyle ?? const TextStyle(fontSize: 14, height: 1.5),
+                  style:
+                      config.dialogContentStyle ??
+                      const TextStyle(fontSize: 14, height: 1.5),
                 ),
               ] else ...[
                 Text(
-                  config.dialogContent ?? 'A new version is available. Would you like to update now?',
-                  style: config.dialogContentStyle ?? const TextStyle(fontSize: 14, height: 1.5),
+                  config.dialogContent ??
+                      'A new version is available. Would you like to update now?',
+                  style:
+                      config.dialogContentStyle ??
+                      const TextStyle(fontSize: 14, height: 1.5),
                 ),
               ],
               if (updateInfo.fileSize != null && Platform.isAndroid) ...[
@@ -62,12 +85,18 @@ class UpdateDialog extends StatelessWidget {
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
               style: config.laterButtonStyle,
-              child: Text(config.laterButtonText ?? 'Later', style: config.buttonTextStyle),
+              child: Text(
+                config.laterButtonText ?? 'Later',
+                style: config.buttonTextStyle,
+              ),
             ),
           ElevatedButton(
             onPressed: () => Navigator.of(context).pop(true),
             style: config.updateButtonStyle,
-            child: Text(config.updateButtonText ?? 'Update Now', style: config.buttonTextStyle),
+            child: Text(
+              config.updateButtonText ?? 'Update Now',
+              style: config.buttonTextStyle,
+            ),
           ),
         ],
       ),

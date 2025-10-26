@@ -17,6 +17,7 @@
 - 📱 **Cross-Platform** - Works on both Android and iOS
 - 🔄 **Automatic Updates** - Version checking, downloading, and installation
 - ⚡ **Force Updates** - Require critical updates with non-dismissible dialogs
+- 🌐 **Language Header Support** - Send custom language codes in API requests
 - 🎯 **Fully Customizable** - Colors, text, styles, and callbacks
 - 🚀 **Self-Hosted** - Complete control with your own update server
 
@@ -130,6 +131,9 @@ final updater = AppUpdater(
 
     // Dialog Style
     dialogStyle: DialogStyle.material, // Choose: material, cupertino, or snackbar
+
+    // Language (auto-detects from device if not provided)
+    language: 'km', // example: 'en', 'km', 'zh', etc.
 
     // UI Customization
     dialogTitle: 'New Update Available',
