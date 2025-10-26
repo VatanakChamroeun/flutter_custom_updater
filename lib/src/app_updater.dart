@@ -54,15 +54,37 @@ class AppUpdater {
     }
   }
 
+  String _getLanguageCode() {
+    // If language is explicitly set in config, use it
+    if (config.language != null && config.language!.isNotEmpty) {
+      return config.language!;
+    }
+
+    // Otherwise, try to get from device locale
+    try {
+      final locale = WidgetsBinding.instance.platformDispatcher.locale;
+      // Return language code (e.g., 'en', 'km', 'zh')
+      return locale.languageCode;
+    } catch (e) {
+      debugPrint('Failed to get locale: $e');
+      return 'en'; // Default to English
+    }
+  }
+
   /// Check for update from server
   Future<UpdateInfo?> _checkForUpdate(String currentVersion) async {
+    final languageCode = _getLanguageCode();
+
     try {
       final headers = {
         'Content-Type': 'application/json',
         'Current-Version': currentVersion,
         'Platform': Platform.isAndroid ? 'android' : 'ios',
+        'Accept-Language': languageCode,
         ...?config.customHeaders,
       };
+
+      debugPrint('🌐 Requesting update with language: $languageCode');
 
       final response = await http
           .get(Uri.parse(config.updateCheckUrl), headers: headers)
@@ -264,7 +286,7 @@ class AppUpdater {
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.15),
+                color: Colors.black.withValues(alpha: 0.15),
                 blurRadius: 20,
                 offset: const Offset(0, 4),
               ),

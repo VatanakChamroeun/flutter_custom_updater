@@ -122,6 +122,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return UpdaterConfig(
       dialogStyle: DialogStyle.snackbar,
       updateCheckUrl: _getServerUrl(),
+      language: 'en', // your current app language
       dialogTitle: 'Update Available! 🚀',
       updateButtonText: 'Update Now',
       laterButtonText: 'Later',

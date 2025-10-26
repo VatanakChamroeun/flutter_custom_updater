@@ -11,6 +11,11 @@ class UpdaterConfig {
   /// Custom headers for API requests
   final Map<String, String>? customHeaders;
 
+  /// Language code for localized update content (e.g., 'en', 'km', 'zh', 'ja')
+  /// If null, will use device's system language automatically
+  /// Default: null (auto-detect from device)
+  final String? language;
+
   /// Timeout for update check request
   final Duration timeout;
 
@@ -59,6 +64,7 @@ class UpdaterConfig {
     this.timeout = const Duration(seconds: 30),
     this.downloadTimeout = const Duration(minutes: 5),
     this.allowDismiss = false,
+    this.language,
     this.iosInstallText,
     this.dialogTitle,
     this.dialogContent,
