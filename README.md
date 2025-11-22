@@ -169,13 +169,18 @@ Your update check endpoint should return JSON in this format:
 
 ```json
 {
-  "has_update": true,
-  "version": "1.2.3",
-  "download_url": "http://your-server.com/downloads/app-v1.2.3.apk",
-  "file_name": "app-v1.2.3.apk",
-  "release_notes": "🚀 New Features:\n- Bug fixes\n- Performance improvements\n- New UI enhancements",
-  "force_update": false,
-  "file_size": 44231891
+  "status": "success",
+  "code": 200,
+  "message": "Update available",
+  "data": {
+    "has_update": true,
+    "version": "1.2.3",
+    "download_url": "http://your-server.com/downloads/app-v1.2.3.apk",
+    "file_name": "app-v1.2.3.apk",
+    "release_notes": "🚀 New Features:\n- Bug fixes\n- Performance improvements\n- New UI enhancements",
+    "force_update": false,
+    "file_size": 44231891
+  }
 }
 ```
 
@@ -183,12 +188,17 @@ Your update check endpoint should return JSON in this format:
 
 ```json
 {
-  "has_update": true,
-  "version": "1.2.3",
-  "download_url": "http://your-server.com/ios/manifest.plist",
-  "ios_manifest_url": "http://your-server.com/ios/manifest.plist",
-  "release_notes": "🍎 iOS Update:\n- Bug fixes\n- Performance improvements\n- New features",
-  "force_update": false
+  "status": "success",
+  "code": 200,
+  "message": "Update available",
+  "data": {
+    "has_update": true,
+    "version": "1.2.3",
+    "download_url": "http://your-server.com/ios/manifest.plist",
+    "ios_manifest_url": "http://your-server.com/ios/manifest.plist",
+    "release_notes": "🍎 iOS Update:\n- Bug fixes\n- Performance improvements\n- New features",
+    "force_update": false
+  }
 }
 ```
 

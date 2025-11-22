@@ -34,6 +34,14 @@ class UpdateInfo {
     );
   }
 
+  /// Factory constructor for "no update available" case
+  factory UpdateInfo.noUpdate() {
+    return UpdateInfo(
+      hasUpdate: false,
+      downloadUrl: '', // Empty string since no download is needed
+    );
+  }
+
   Map<String, dynamic> toJson() {
     return {
       'has_update': hasUpdate,
