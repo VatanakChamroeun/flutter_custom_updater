@@ -82,52 +82,66 @@ app.get('/api/check-update', (req, res) => {
   if (!hasUpdate) {
     console.log('✅ No update needed');
     return res.json({
-      has_update: false
+      status: 'success',
+      code: 200,
+      message: 'No update available',
+      data: {
+        has_update: false,
+        current_version: currentVersion,
+        latest_version: latestVersion
+      }
     });
   }
   
   console.log('🆕 Update available!');
   
-  // Get server URL (works with local IP and localhost)
   const protocol = req.protocol;
   const host = req.get('host');
   const baseUrl = `${protocol}://${host}`;
   
   if (platform === 'android') {
-    // Android response
     const apkFileName = 'app-v1.2.3.apk';
     const apkPath = path.join(__dirname, 'downloads', apkFileName);
     
-    // Get file size if file exists
     let fileSize = 0;
     if (fs.existsSync(apkPath)) {
       fileSize = fs.statSync(apkPath).size;
     }
     
-    res.json({
-      has_update: true,
-      version: latestVersion,
-      download_url: `${baseUrl}/downloads/${apkFileName}`,
-      file_name: apkFileName,
-      release_notes: getLocalizedReleaseNotes(language, 'android'),
-      force_update: false,
-      file_size: fileSize
+    return res.json({
+      status: 'success',
+      code: 200,
+      message: 'Update available',
+      data: {
+        has_update: true,
+        version: latestVersion,
+        download_url: `${baseUrl}/downloads/${apkFileName}`,
+        file_name: apkFileName,
+        release_notes: getLocalizedReleaseNotes(language, 'android'),
+        force_update: false,
+        file_size: fileSize
+      }
     });
   } else if (platform === 'ios') {
-    // iOS response
-    res.json({
-      has_update: true,
-      version: latestVersion,
-      download_url: `${baseUrl}/ios/manifest.plist`,
-      ios_manifest_url: `${baseUrl}/ios/manifest.plist`,
-      release_notes: getLocalizedReleaseNotes(language, 'ios'),
-      force_update: false
+    return res.json({
+      status: 'success',
+      code: 200,
+      message: 'Update available',
+      data: {
+        has_update: true,
+        version: latestVersion,
+        download_url: `${baseUrl}/ios/manifest.plist`,
+        ios_manifest_url: `${baseUrl}/ios/manifest.plist`,
+        release_notes: getLocalizedReleaseNotes(language, 'ios'),
+        force_update: false
+      }
     });
   } else {
-    // Unknown platform
-    res.json({
-      has_update: false,
-      error: 'Unknown platform'
+    return res.json({
+      status: 'error',
+      code: 400,
+      message: 'Unknown platform',
+      data: null
     });
   }
 });

@@ -94,7 +94,8 @@ class AppUpdater {
           );
 
       if (response.statusCode == 200) {
-        final data = json.decode(response.body);
+        final jsonResponse = json.decode(response.body);
+        final data = jsonResponse['data'] ?? jsonResponse;
         return UpdateInfo.fromJson(data);
       } else {
         throw Exception('Failed to check update: ${response.statusCode}');

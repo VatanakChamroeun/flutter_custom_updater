@@ -96,10 +96,12 @@ class _HomeScreenState extends State<HomeScreen> {
       throw Exception('Server returned status code ${response.statusCode}');
     }
 
-    final data = json.decode(response.body);
+    final jsonResponse = json.decode(response.body);
+    final responseData = jsonResponse['data'] ?? jsonResponse;
+    
     return UpdateInfo(
-      hasUpdate: data['has_update'] ?? false,
-      version: data['version'] ?? _appVersion,
+      hasUpdate: responseData['has_update'] ?? false,
+      version: responseData['version'] ?? _appVersion,
     );
   }
 
